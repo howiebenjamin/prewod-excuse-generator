@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pre-WOD Excuse Generator</title>
+  <style>
+    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    body { margin: 0; background: #0b0f14; color: #e9eef6; }
+    .wrap { 
+  max-width: 480px;   /* Phone width feel */
+  margin: 0 auto; 
+  padding: 24px 16px 60px; 
+}
+    .card {
+      background: #121a24;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    h1 { margin: 0 0 8px; font-size: 28px; letter-spacing: .2px; }
+    .sub { opacity: .8; margin-bottom: 18px; }
+    .row { 
+  display: grid; 
+  gap: 14px; 
+  grid-template-columns: 1fr;  /* Always single column for mobile */
+}
+   .excuse {
+  font-size: 22px;
+  line-height: 1.4;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 16px;
+  padding: 18px;
+  min-height: 140px;  /* Bigger for thumbs */
+  display: flex;
+  align-items: center;
+}
+    .controls { display: grid; gap: 10px; }
+    .controls label { font-size: 13px; opacity: .85; }
+    select, input[type="range"], button {
+  width: 100%;
+  padding: 16px 16px;   /* Bigger tap targets */
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: #0f1620;
+  color: #e9eef6;
+  outline: none;
+  font-size: 16px;      /* Mobile readable */
+}
+    button {
+      cursor: pointer;
+      font-weight: 700;
+      border: 1px solid rgba(255,255,255,.18);
+      background: linear-gradient(180deg, rgba(101,163,255,.22), rgba(101,163,255,.08));
+    }
+    button.secondary {
+      font-weight: 600;
+      background: rgba(255,255,255,.05);
+    }
+    .mini { font-size: 12px; opacity: .75; }
+    .pillrow { display:flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .pill {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      font-size: 12px;
+      opacity: .9;
+    }
+    .fav {
+      margin-top: 18px;
+      display: grid;
+      gap: 10px;
+    }
+    .favItem {
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      display: grid;
+      gap: 8px;
+    }
+    .favItem .actions { display:flex; gap: 8px; }
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 16px;
+      transform: translateX(-50%);
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.75);
+      border: 1px solid rgba(255,255,255,.12);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease;
+      font-size: 13px;
+    }
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Pre-WOD Excuse Generator</h1>
+      <div class="sub">For when you’re “not skipping”… you’re <em>periodizing</em>.</div>
+
+      <div class="row">
+        <div>
+          <div id="excuse" class="excuse">Tap “Generate” to produce an excuse with maximum plausibility.</div>
+          <div class="pillrow">
+            <span class="pill" id="tagCat">Category: —</span>
+            <span class="pill" id="tagBel">Believability: —</span>
+            <span class="pill" id="tagSpice">Coach-proof: —</span>
+          </div>
+        </div>
+
+        <div class="controls">
+          <div>
+            <label for="category">Excuse style</label>
+            <select id="category">
+              <option value="any">Any</option>
+              <option value="injury">Injury-ish</option>
+              <option value="recovery">Recovery science</option>
+              <option value="life">Work/Life logistics</option>
+              <option value="coach">Coach will understand</option>
+              <option value="absurd">Unhinged</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="believability">Believability slider</label>
+            <input id="believability" type="range" min="1" max="10" value="7" />
+            <div class="mini">1 = “aliens” • 10 = “doctor’s note energy”</div>
+          </div>
+
+          <button id="gen">Generate Excuse</button>
+          <button id="copy" class="secondary">Copy</button>
+          <button id="fav" class="secondary">Save to Favorites</button>
+          <button id="clearFav" class="secondary">Clear Favorites</button>
+
+          <div class="mini" style="margin-top:6px; opacity:.7">
+            Tip: choose “Coach will understand” for maximum survival.
+          </div>
+        </div>
+      </div>
+
+      <div class="fav">
+        <h2 style="margin: 10px 0 0; font-size: 16px;">Favorites</h2>
+        <div id="favList" class="mini" style="opacity:.9">No favorites yet.</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">Copied.</div>
+
+  <script>
+    // --- Core idea: mix template + jargon + modifiers based on believability.
+    const data = {
+      injury: [
+        "My {bodyPart} is doing that thing again — I’m going to stay in {zone} today.",
+        "I tweaked my {bodyPart} on a very innocent movement (like {innocent}). I’m scaling hard.",
+        "I’ve got a {injuryWord} {bodyPart}. If I go RX, I’ll be a cautionary tale.",
+        "My {bodyPart} is tight in a way that feels… litigious. I’ll do {safeAlt}."
+      ],
+      recovery: [
+        "My {scienceThing} is cooked. I’m doing a {deloadType} deload for nervous system hygiene.",
+        "Sleep debt is {sleepNum} hours. I’m prioritizing recovery so I can peak for… Tuesday.",
+        "I’m in a low-readiness state per my {wearable}. If I push, it’s basically malpractice.",
+        "I’m skipping intensity to restore {scienceThing} and protect my long-term {goalWord}."
+      ],
+      life: [
+        "I have a {lifeThing} at {timeThing}. I’ll make it up with a shame-WOD later.",
+        "I’m on kid logistics today — if I’m late, it’s because I’m a responsible adult (allegedly).",
+        "Work dropped a {workThing}. If I ignore it, I’ll be doing burpees in my unemployment.",
+        "I can’t make it — I’m stuck dealing with {lifeThing}. Please log me as ‘mentally present’."
+      ],
+      coach: [
+        "Coach, I’m going to scale today so I don’t turn a fun WOD into a 6-week rehab arc.",
+        "I’m here, I’m moving, but I’m not going full send — I want consistency over heroics.",
+        "I’m in the ‘train, don’t test’ phase today. I’ll keep it aerobic and be a good citizen.",
+        "I’m protecting my {bodyPart} so I can show up tomorrow instead of becoming gym folklore."
+      ],
+      absurd: [
+        "I can’t do RX. My {bodyPart} is in retrograde and my {scienceThing} is emotionally unavailable.",
+        "I’m scaling because my {wearable} said I’m ‘built different’ but in a fragile way.",
+        "I did mobility and accidentally achieved enlightenment. Intensity would ruin it.",
+        "I can’t train today — I’m in a feud with the Assault Bike and it’s getting legal."
+      ]
+    };
+
+    const words = {
+      bodyPart: ["shoulder", "knee", "hip", "lower back", "wrist", "ankle", "elbow", "pec", "neck", "shin"],
+      zone: ["Zone 2", "technique town", "easy street", "scaled nation", "moderate purgatory"],
+      innocent: ["box step-ups", "air squats", "stretching", "sneezing", "putting my shoes on"],
+      injuryWord: ["spicy", "mildly haunted", "questionable", "suspicious", "high-maintenance"],
+      safeAlt: ["bike + light DB work", "ring rows + strict", "sled drags", "tempo goblet squats", "row + core"],
+      scienceThing: ["CNS", "HRV", "parasympathetic tone", "mitochondria", "connective tissue", "glycogen stores"],
+      deloadType: ["strategic", "high-IQ", "scientific", "humble", "responsible-adult"],
+      sleepNum: ["6", "7.5", "9", "12", "a criminal amount of"],
+      wearable: ["WHOOP", "Oura", "Apple Watch", "Garmin", "fit-check mirror"],
+      goalWord: ["gainz", "performance", "longevity", "PR potential", "knees"],
+      lifeThing: ["a plumber situation", "a dentist thing", "a family meeting", "DMV nonsense", "a surprise adult responsibility"],
+      timeThing: ["noon", "2pm", "right after class", "in 30 minutes", "in exactly one inconvenient hour"],
+      workThing: ["fire drill", "client emergency", "calendar ambush", "‘quick’ meeting", "spreadsheet incident"]
+    };
+
+    const plausibilityBoosters = [
+      "I’ll still warm up and move.",
+      "I’ll be there, just not doing anything that makes noises.",
+      "I’m choosing ‘tomorrow me’ today.",
+      "I’ll keep it controlled and focus on quality reps.",
+      "I’m subbing {safeAlt} so I don’t become a walking meme."
+    ];
+
+    const coachProofAddons = [
+      "I’m happy to judge, count reps, or wipe equipment like a contributing member of society.",
+      "I’ll set up/tear down so I still suffer emotionally.",
+      "I’ll do extra mobility so it looks like I’m trying.",
+      "I’ll stay after and clean chalk off things that should never be chalky."
+    ];
+
+    function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+    function fill(template) {
+      return template.replace(/\{(\w+)\}/g, (_, key) => {
+        if (!words[key]) return "{"+key+"}";
+        return pick(words[key]);
+      });
+    }
+
+    function generate(category, bel) {
+      const cats = Object.keys(data);
+      const cat = category === "any" ? pick(cats) : category;
+
+      let base = pick(data[cat]);
+      base = fill(base);
+
+      // Believability: high = more grounded, low = more ridiculous.
+      let spice = "";
+      let coachProof = "";
+
+      if (bel >= 8) {
+        spice = " " + fill(pick(plausibilityBoosters));
+        coachProof = " " + pick(coachProofAddons);
+      } else if (bel >= 5) {
+        spice = " " + pick(plausibilityBoosters).replace("{safeAlt}", pick(words.safeAlt));
+      } else {
+        // Make it more unhinged by sneaking in absurd modifiers.
+        const chaos = [
+          "Also, the music in my car sounded ‘too fast’ today, so I’m listening to my body.",
+          "If I go hard, my hamstrings will unionize.",
+          "I’m currently sore in places that don’t have names."
+        ];
+        spice = " " + pick(chaos);
+      }
+
+      // “Coach-proof” score
+      const coachScore = bel >= 8 ? "High" : bel >= 5 ? "Medium" : "Low";
+
+      return {
+        text: (base + spice + (bel >= 8 ? coachProof : "")).trim(),
+        cat,
+        bel,
+        coachScore
+      };
+    }
+
+    // --- UI Wiring
+    const elExcuse = document.getElementById("excuse");
+    const elCat = document.getElementById("category");
+    const elBel = document.getElementById("believability");
+    const elTagCat = document.getElementById("tagCat");
+    const elTagBel = document.getElementById("tagBel");
+    const elTagSpice = document.getElementById("tagSpice");
+    const elToast = document.getElementById("toast");
+
+    let current = null;
+
+    function showToast(msg) {
+      elToast.textContent = msg;
+      elToast.classList.add("show");
+      setTimeout(() => elToast.classList.remove("show"), 900);
+    }
+
+    function renderCurrent() {
+      if (!current) return;
+      elExcuse.textContent = current.text;
+      elTagCat.textContent = "Category: " + current.cat;
+      elTagBel.textContent = "Believability: " + current.bel + "/10";
+      elTagSpice.textContent = "Coach-proof: " + current.coachScore;
+    }
+
+    // Favorites (localStorage)
+    const KEY = "prewod_excuses_favs_v1";
+    function loadFavs() {
+      try { return JSON.parse(localStorage.getItem(KEY) || "[]"); }
+      catch { return []; }
+    }
+    function saveFavs(favs) {
+      localStorage.setItem(KEY, JSON.stringify(favs));
+    }
+    function renderFavs() {
+      const favs = loadFavs();
+      const el = document.getElementById("favList");
+      if (!favs.length) {
+        el.innerHTML = "No favorites yet.";
+        return;
+      }
+      el.innerHTML = "";
+      favs.slice().reverse().forEach((t, idxFromEnd) => {
+        const idx = favs.length - 1 - idxFromEnd;
+        const div = document.createElement("div");
+        div.className = "favItem";
+        div.innerHTML = `
+          <div style="font-size:13px; opacity:.9">${t.replace(/</g,"&lt;").replace(/>/g,"&gt;")}</div>
+          <div class="actions">
+            <button class="secondary" data-copy="${idx}">Copy</button>
+            <button class="secondary" data-del="${idx}">Delete</button>
+          </div>
+        `;
+        el.appendChild(div);
+      });
+
+      el.querySelectorAll("button[data-copy]").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const i = Number(btn.getAttribute("data-copy"));
+          const txt = loadFavs()[i];
+          await navigator.clipboard.writeText(txt);
+          showToast("Copied favorite.");
+        });
+      });
+      el.querySelectorAll("button[data-del]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const i = Number(btn.getAttribute("data-del"));
+          const favs2 = loadFavs();
+          favs2.splice(i, 1);
+          saveFavs(favs2);
+          renderFavs();
+          showToast("Deleted.");
+        });
+      });
+    }
+
+    document.getElementById("gen").addEventListener("click", () => {
+      current = generate(elCat.value, Number(elBel.value));
+      renderCurrent();
+    });
+
+    document.getElementById("copy").addEventListener("click", async () => {
+      if (!current) current = generate(elCat.value, Number(elBel.value));
+      await navigator.clipboard.writeText(current.text);
+      showToast("Copied.");
+    });
+
+    document.getElementById("fav").addEventListener("click", () => {
+      if (!current) current = generate(elCat.value, Number(elBel.value));
+      const favs = loadFavs();
+      if (!favs.includes(current.text)) favs.push(current.text);
+      saveFavs(favs);
+      renderFavs();
+      showToast("Saved.");
+    });
+
+    document.getElementById("clearFav").addEventListener("click", () => {
+      localStorage.removeItem(KEY);
+      renderFavs();
+      showToast("Cleared.");
+    });
+
+    // Initial render
+    current = generate("any", Number(elBel.value));
+    renderCurrent();
+    renderFavs();
+  </script>
+</body>
+</html>
