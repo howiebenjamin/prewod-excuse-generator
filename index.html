@@ -8,21 +8,21 @@
 
   <style>
     :root{
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 
-      --bg:#0b0f14;
-      --card:#121a24;
+  /* ROOTS ORANGE THEME */
+  --bg:#f07820;              /* main background (Roots orange) */
+  --card:#111418;            /* dark card for contrast */
+  --text:#ffffff;
+  --muted:rgba(255,255,255,.75);
 
-      --text:#f4f0e2;
-      --muted: rgba(244,240,226,.75);
+  --border:rgba(255,255,255,.18);
 
-      --border: rgba(244,240,226,.14);
+  --accent:#ffffff;          /* highlight color */
+  --danger:#cb0133;
 
-      --accent:#0b868f;
-      --danger:#cb0133;
-
-      --chip:#0e1520;
-    }
+  --chip:#1b1f24;
+}
 
     @media (prefers-reduced-motion: reduce){
       * { animation: none !important; transition: none !important; }
@@ -32,9 +32,19 @@
     .wrap{ max-width:1150px; margin:0 auto; padding:18px 16px 52px; }
 
     header{
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-      margin-bottom:16px;
-    }
+      header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:22px;
+
+  padding:14px 18px;
+  border-radius:18px;
+
+  background:rgba(0,0,0,.22); /* dark overlay on orange */
+  box-shadow:0 12px 28px rgba(0,0,0,.30);
+}
     .brand{ display:flex; align-items:center; gap:12px; }
     .logo{
       width:44px; height:44px; border-radius:12px; object-fit:cover;
@@ -47,12 +57,12 @@
     @media (min-width:980px){ .grid{ grid-template-columns: 1.15fr .85fr; } }
 
     .card{
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:16px;
-      padding:16px;
-      box-shadow: 0 10px 26px rgba(0,0,0,.28);
-    }
+  background:var(--card);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:16px;
+  padding:16px;
+  box-shadow:0 18px 40px rgba(0,0,0,.35);
+}
 
     .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:end; }
     label{ display:block; font-size:13px; color:var(--muted); margin-bottom:6px; }
@@ -84,20 +94,21 @@
     .divider{ height:1px; background:var(--border); margin:14px 0; }
 
     .memeWrap{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:flex-end; }
-    .meme{
+   .meme{
   width:60px;
   height:60px;
   border-radius:14px;
   object-fit:cover;
-  border:1px solid rgba(244,240,226,.18);
-  background:#f07820; /* gym orange */
+  background:#ffffff; /* white base */
+  padding:6px;
+  border:2px solid #ffffff;
   transition:transform .18s ease, box-shadow .18s ease;
   cursor:pointer;
 }
 
 .meme:hover{
-  transform:scale(1.06);
-  box-shadow:0 8px 18px rgba(0,0,0,.35);
+  transform:scale(1.08);
+  box-shadow:0 12px 24px rgba(0,0,0,.35);
 }
     .pill{
       display:flex; gap:10px; align-items:center; flex-wrap:wrap;
@@ -956,5 +967,6 @@
   </script>
 </body>
 </html>
+
 
 
