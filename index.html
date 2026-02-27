@@ -336,14 +336,35 @@ button.ghost{
       100%{ transform: translateY(110vh) rotate(520deg); opacity:0; }
     }
 
-    /* Mobile fit */
-    @media (max-width: 560px){
-      .plates{ min-width: 150px; }
-      .barbell{ width: 200px; }
-      .sleeve{ width: 34px; }
-      input[type="number"]{ width: 150px; }
-      select{ min-width: 150px; }
-    }
+    /* ===== Mobile Layout Fix (Centered + Balanced) ===== */
+@media (max-width: 560px){
+
+  .viz{
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .plates{
+    min-width: auto;
+    gap: 6px;
+  }
+
+  .barbell{
+    width: 170px;
+  }
+
+  .sleeve{
+    width: 28px;
+  }
+
+  input[type="number"]{
+    width: 150px;
+  }
+
+  select{
+    min-width: 150px;
+  }
+}
   </style>
 </head>
 
@@ -993,6 +1014,7 @@ button.ghost{
   </script>
 </body>
 </html>
+
 
 
 
