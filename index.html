@@ -28,17 +28,22 @@
       * { animation: none !important; transition: none !important; }
     }
 
-    body{ margin:0; background:var(--bg); color:var(--text); }
+    body{
+  margin:0;
+  color:var(--text);
+  background: radial-gradient(1200px 700px at 10% 0%, rgba(255,255,255,.10), transparent 60%),
+              radial-gradient(900px 600px at 90% 10%, rgba(0,0,0,.18), transparent 55%),
+              var(--bg);
+}
     .wrap{ max-width:1150px; margin:0 auto; padding:18px 16px 52px; }
 
     header{
-      header{
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:12px;
-  margin-bottom:22px;
-
+  margin-bottom:16px;
+}
   padding:14px 18px;
   border-radius:18px;
 
@@ -78,18 +83,20 @@
     input[type="number"]{ width: 170px; }
     select{ min-width: 170px; }
 
-    button{
-      cursor:pointer;
-      font-weight:700;
-      background: linear-gradient(180deg, rgba(11,134,143,.25), rgba(11,134,143,.08));
-      border-color: rgba(11,134,143,.45);
-    }
-    button:hover{ filter:brightness(1.06); }
-    button.ghost{
-      background: transparent;
-      border-color: rgba(244,240,226,.18);
-      font-weight:650;
-    }
+   button{
+  cursor:pointer;
+  font-weight:800;
+  background: linear-gradient(180deg, rgba(255,255,255,.18), rgba(0,0,0,.10));
+  border-color: rgba(255,255,255,.35);
+}
+
+button:hover{ filter:brightness(1.06); }
+
+button.ghost{
+  background: rgba(0,0,0,.10);
+  border-color: rgba(255,255,255,.35);
+  font-weight:750;
+}
 
     .divider{ height:1px; background:var(--border); margin:14px 0; }
 
@@ -413,7 +420,7 @@
           <div class="mini muted" style="flex:1;">
             Plates + inventory (<b>pairs</b> available). Toggle plate sizes and set how many pairs you have.
           </div>
-          <button id="resetInvBtn" class="ghost" title="Reset to 1 pair each">Reset inventory</button>
+          <button id="resetInvBtn" class="ghost" title="Reset to 5 pairs each">Reset inventory</button>
         </div>
 
         <div id="platesWrap"></div>
@@ -967,6 +974,7 @@
   </script>
 </body>
 </html>
+
 
 
 
