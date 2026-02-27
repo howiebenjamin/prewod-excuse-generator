@@ -1,40 +1,271 @@
 <!-- version: 2026-02-27 -->
 <!doctype html>
-Barbell Buddy
-    <img class="logo" src="cc-logo.jpg" alt="Gym Logo">
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Barbell Buddy</title>
+
+<style>
+:root{
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  --bg:#0b0f14;
+  --card:#121a24;
+  --text:#f4f0e2;
+  --muted:rgba(244,240,226,.75);
+  --border:rgba(244,240,226,.14);
+  --accent:#0b868f;
+  --danger:#cb0133;
+  --chip:#0e1520;
+}
+
+body{margin:0;background:var(--bg);color:var(--text);}
+.wrap{max-width:1150px;margin:0 auto;padding:18px 16px 48px;}
+
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.brand{display:flex;align-items:center;gap:12px;}
+.logo{width:44px;height:44px;border-radius:12px;border:1px solid var(--border);}
+h1{margin:0;font-size:26px;}
+.sub{font-size:13px;color:var(--muted);}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:16px;
+  box-shadow:0 10px 26px rgba(0,0,0,.28);
+  margin-bottom:16px;
+}
+
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end;}
+label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px;}
+input,select,button{
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:var(--chip);
+  color:var(--text);
+  padding:10px 12px;
+}
+button{cursor:pointer;font-weight:700;}
+button.ghost{background:transparent;border-color:rgba(244,240,226,.18);}
+
+.memeWrap{display:flex;align-items:center;gap:12px;}
+.meme{
+  width:64px;height:64px;border-radius:14px;
+  transition:transform .18s ease;
+  cursor:pointer;
+}
+.meme:hover{transform:scale(1.08);}
+
+.viz{display:flex;align-items:center;justify-content:space-between;margin-top:20px;}
+.bar{
+  width:240px;height:12px;border-radius:999px;
+  background:linear-gradient(90deg,rgba(244,240,226,.08),rgba(244,240,226,.22),rgba(244,240,226,.08));
+  border:1px solid rgba(244,240,226,.22);
+  transform-origin:center;
+}
+.bar.spin{animation:spin .25s ease-out;}
+@keyframes spin{
+  0%{transform:rotate(0deg);}
+  50%{transform:rotate(-1.2deg);}
+  100%{transform:rotate(0deg);}
+}
+
+.plates{display:flex;gap:8px;align-items:flex-end;min-width:320px;}
+.plates.left{justify-content:flex-end;}
+.plates.right{justify-content:flex-start;}
+
+.plate{width:var(--w,32px);height:var(--h,60px);}
+.plate svg{width:100%;height:100%;}
+.plate.slideLeft{animation:slideL .25s ease-out;}
+.plate.slideRight{animation:slideR .25s ease-out;}
+
+@keyframes slideL{
+  from{transform:translateX(30px);opacity:0;}
+  to{transform:translateX(0);opacity:1;}
+}
+@keyframes slideR{
+  from{transform:translateX(-30px);opacity:0;}
+  to{transform:translateX(0);opacity:1;}
+}
+
+.ok{border-left:4px solid var(--accent);padding:8px;margin-top:10px;}
+.warn{border-left:4px solid var(--danger);padding:8px;margin-top:10px;}
+
+.confetti{
+  position:fixed;
+  top:-10px;
+  width:10px;height:14px;
+  border-radius:3px;
+  animation:fall 1.2s ease-out forwards;
+}
+@keyframes fall{
+  100%{transform:translateY(110vh) rotate(500deg);opacity:0;}
+}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+<header>
+  <div class="brand">
+    <img class="logo" src="cc-logo.jpg">
     <div>
       <h1>Barbell Buddy</h1>
-      <div class="sub">Plate math that feels like a gym app.</div>
+      <div class="sub">Precision plate loading.</div>
     </div>
+  </div>
 
+  <div class="memeWrap">
     <button id="muteBtn" class="ghost">🔊 Sound: ON</button>
-
-    <a href="https://crossfitroots.com/" 
-       target="_blank" 
-       rel="noopener noreferrer"
-       title="Visit CrossFit Roots">
-      <img class="meme" src="cc-logo.jpg" alt="CrossFit Roots">
+    <a href="https://crossfitroots.com/" target="_blank">
+      <img class="meme" src="cc-logo.jpg">
     </a>
+  </div>
+</header>
 
-    <div>
-      <label>Bar weight</label>
-      <select id="bar">
-        <option value="45">45 lb</option>
-        <option value="35">35 lb</option>
-        <option value="20">20 kg</option>
-      </select>
-    </div>
+<div class="card">
+<div class="row">
+<div>
+<label>Bar weight</label>
+<select id="bar">
+<option value="45">45 lb</option>
+<option value="35">35 lb</option>
+</select>
+</div>
 
-    <div>
-      <label>Target total</label>
-      <input id="target" type="number" value="225">
-    </div>
+<div>
+<label>Target</label>
+<input id="target" type="number" value="225">
+</div>
 
-    <div>
-      <label>&nbsp;</label>
-      <button id="calcBtn">Calculate</button>
-    </div>
+<div>
+<label>Mode</label>
+<select id="mode">
+<option value="exact">Exact</option>
+<option value="under">Closest Under</option>
+<option value="over">Closest Over</option>
+<option value="either">Closest Either</option>
+</select>
+</div>
 
-    <div class="plates left" id="vizLeft"></div>
-    <div class="bar"></div>
-    <div class="plates right" id="vizRight"></div>
+<div>
+<label>&nbsp;</label>
+<button id="calcBtn">Calculate</button>
+</div>
+</div>
+
+<div id="status"></div>
+
+<div class="viz">
+<div class="plates left" id="left"></div>
+<div class="bar" id="barViz"></div>
+<div class="plates right" id="right"></div>
+</div>
+</div>
+
+</div>
+
+<script>
+const left=document.getElementById("left");
+const right=document.getElementById("right");
+const calcBtn=document.getElementById("calcBtn");
+const barViz=document.getElementById("barViz");
+const status=document.getElementById("status");
+const muteBtn=document.getElementById("muteBtn");
+
+let soundOn=true;
+
+const PLATES=[45,35,25,10,5,2.5];
+
+function fmt(n){return Number(n).toFixed(0);}
+
+function svgPlate(w){
+return `
+<svg viewBox="0 0 100 160">
+<rect x="10" y="10" width="80" height="140" rx="18"
+fill="hsl(185 55% 24%)" stroke="rgba(244,240,226,.18)"/>
+<circle cx="50" cy="80" r="22"
+fill="rgba(0,0,0,.35)" stroke="rgba(244,240,226,.22)" stroke-width="3"/>
+<text x="50" y="85" text-anchor="middle"
+fill="white" font-size="28">${fmt(w)}</text>
+</svg>`;
+}
+
+function popConfetti(){
+for(let i=0;i<20;i++){
+let c=document.createElement("div");
+c.className="confetti";
+c.style.left=Math.random()*100+"vw";
+c.style.background=`hsl(${Math.random()*360},90%,60%)`;
+document.body.appendChild(c);
+setTimeout(()=>c.remove(),1200);
+}
+}
+
+function render(perSide){
+left.innerHTML="";
+right.innerHTML="";
+for(let i=0;i<perSide.length;i++){
+let w=perSide[i];
+let p=document.createElement("div");
+p.className="plate slideLeft";
+p.style.setProperty("--h","60px");
+p.style.setProperty("--w","34px");
+p.innerHTML=svgPlate(w);
+left.prepend(p);
+
+let p2=document.createElement("div");
+p2.className="plate slideRight";
+p2.style.setProperty("--h","60px");
+p2.style.setProperty("--w","34px");
+p2.innerHTML=svgPlate(w);
+right.appendChild(p2);
+}
+}
+
+function calculate(){
+barViz.classList.remove("spin");
+void barViz.offsetWidth;
+barViz.classList.add("spin");
+
+let target=Number(document.getElementById("target").value);
+let bar=Number(document.getElementById("bar").value);
+let mode=document.getElementById("mode").value;
+
+let load=target-bar;
+let perSide=load/2;
+let solution=[];
+let remaining=perSide;
+
+for(let p of PLATES){
+while(remaining>=p){
+solution.push(p);
+remaining-=p;
+}
+}
+
+render(solution);
+
+let total=bar+solution.reduce((a,b)=>a+b,0)*2;
+let diff=total-target;
+
+if(diff===0){
+status.innerHTML=`<div class="ok">Exact match ${total}</div>`;
+popConfetti();
+}else{
+status.innerHTML=`<div class="warn">${total} (${diff>0?"over":"under"} by ${Math.abs(diff)})</div>`;
+}
+}
+
+calcBtn.addEventListener("click",calculate);
+
+muteBtn.addEventListener("click",()=>{
+soundOn=!soundOn;
+muteBtn.textContent=soundOn?"🔊 Sound: ON":"🔇 Sound: OFF";
+});
+</script>
+
+</body>
+</html>
