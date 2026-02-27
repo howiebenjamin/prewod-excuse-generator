@@ -2,270 +2,951 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Barbell Buddy</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Barbell Buddy</title>
 
-<style>
-:root{
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  --bg:#0b0f14;
-  --card:#121a24;
-  --text:#f4f0e2;
-  --muted:rgba(244,240,226,.75);
-  --border:rgba(244,240,226,.14);
-  --accent:#0b868f;
-  --danger:#cb0133;
-  --chip:#0e1520;
-}
+  <style>
+    :root{
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 
-body{margin:0;background:var(--bg);color:var(--text);}
-.wrap{max-width:1150px;margin:0 auto;padding:18px 16px 48px;}
+      --bg:#0b0f14;
+      --card:#121a24;
 
-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-.brand{display:flex;align-items:center;gap:12px;}
-.logo{width:44px;height:44px;border-radius:12px;border:1px solid var(--border);}
-h1{margin:0;font-size:26px;}
-.sub{font-size:13px;color:var(--muted);}
+      --text:#f4f0e2;
+      --muted: rgba(244,240,226,.75);
 
-.card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:16px;
-  box-shadow:0 10px 26px rgba(0,0,0,.28);
-  margin-bottom:16px;
-}
+      --border: rgba(244,240,226,.14);
 
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end;}
-label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px;}
-input,select,button{
-  border-radius:12px;
-  border:1px solid var(--border);
-  background:var(--chip);
-  color:var(--text);
-  padding:10px 12px;
-}
-button{cursor:pointer;font-weight:700;}
-button.ghost{background:transparent;border-color:rgba(244,240,226,.18);}
+      --accent:#0b868f;
+      --danger:#cb0133;
 
-.memeWrap{display:flex;align-items:center;gap:12px;}
-.meme{
-  width:64px;height:64px;border-radius:14px;
-  transition:transform .18s ease;
-  cursor:pointer;
-}
-.meme:hover{transform:scale(1.08);}
+      --chip:#0e1520;
+    }
 
-.viz{display:flex;align-items:center;justify-content:space-between;margin-top:20px;}
-.bar{
-  width:240px;height:12px;border-radius:999px;
-  background:linear-gradient(90deg,rgba(244,240,226,.08),rgba(244,240,226,.22),rgba(244,240,226,.08));
-  border:1px solid rgba(244,240,226,.22);
-  transform-origin:center;
-}
-.bar.spin{animation:spin .25s ease-out;}
-@keyframes spin{
-  0%{transform:rotate(0deg);}
-  50%{transform:rotate(-1.2deg);}
-  100%{transform:rotate(0deg);}
-}
+    @media (prefers-reduced-motion: reduce){
+      * { animation: none !important; transition: none !important; }
+    }
 
-.plates{display:flex;gap:8px;align-items:flex-end;min-width:320px;}
-.plates.left{justify-content:flex-end;}
-.plates.right{justify-content:flex-start;}
+    body{ margin:0; background:var(--bg); color:var(--text); }
+    .wrap{ max-width:1150px; margin:0 auto; padding:18px 16px 52px; }
 
-.plate{width:var(--w,32px);height:var(--h,60px);}
-.plate svg{width:100%;height:100%;}
-.plate.slideLeft{animation:slideL .25s ease-out;}
-.plate.slideRight{animation:slideR .25s ease-out;}
+    header{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      margin-bottom:16px;
+    }
+    .brand{ display:flex; align-items:center; gap:12px; }
+    .logo{
+      width:44px; height:44px; border-radius:12px; object-fit:cover;
+      border:1px solid var(--border); background:var(--chip);
+    }
+    h1{ margin:0; font-size:26px; line-height:1.1; }
+    .sub{ margin-top:2px; font-size:13px; color:var(--muted); }
 
-@keyframes slideL{
-  from{transform:translateX(30px);opacity:0;}
-  to{transform:translateX(0);opacity:1;}
-}
-@keyframes slideR{
-  from{transform:translateX(-30px);opacity:0;}
-  to{transform:translateX(0);opacity:1;}
-}
+    .grid{ display:grid; gap:14px; grid-template-columns: 1fr; }
+    @media (min-width:980px){ .grid{ grid-template-columns: 1.15fr .85fr; } }
 
-.ok{border-left:4px solid var(--accent);padding:8px;margin-top:10px;}
-.warn{border-left:4px solid var(--danger);padding:8px;margin-top:10px;}
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:16px;
+      box-shadow: 0 10px 26px rgba(0,0,0,.28);
+    }
 
-.confetti{
-  position:fixed;
-  top:-10px;
-  width:10px;height:14px;
-  border-radius:3px;
-  animation:fall 1.2s ease-out forwards;
-}
-@keyframes fall{
-  100%{transform:translateY(110vh) rotate(500deg);opacity:0;}
-}
-</style>
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:end; }
+    label{ display:block; font-size:13px; color:var(--muted); margin-bottom:6px; }
+    input, select, button{
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:var(--chip);
+      color:var(--text);
+      padding:10px 12px;
+      font-size:15px;
+      outline:none;
+    }
+    input[type="number"]{ width: 170px; }
+    select{ min-width: 170px; }
+
+    button{
+      cursor:pointer;
+      font-weight:700;
+      background: linear-gradient(180deg, rgba(11,134,143,.25), rgba(11,134,143,.08));
+      border-color: rgba(11,134,143,.45);
+    }
+    button:hover{ filter:brightness(1.06); }
+    button.ghost{
+      background: transparent;
+      border-color: rgba(244,240,226,.18);
+      font-weight:650;
+    }
+
+    .divider{ height:1px; background:var(--border); margin:14px 0; }
+
+    .memeWrap{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:flex-end; }
+    .meme{
+      width:64px; height:64px; border-radius:14px; object-fit:cover;
+      border:1px solid var(--border);
+      transition: transform .18s ease, filter .18s ease;
+      cursor:pointer;
+      background:var(--chip);
+    }
+    .meme:hover{ transform: scale(1.08); filter: brightness(1.12); }
+
+    .pill{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:var(--chip);
+      margin-top:10px;
+    }
+    .pill input[type="checkbox"]{ transform: scale(1.15); }
+    .pill .w{ min-width:92px; font-weight:800; }
+    .mini{ font-size:13px; }
+    .muted{ color:var(--muted); }
+
+    .ok{
+      border-left:4px solid var(--accent);
+      background: rgba(11,134,143,.10);
+      padding:10px 12px;
+      border-radius:12px;
+      margin-top:10px;
+      position:relative;
+      overflow:hidden;
+    }
+    .ok::after{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(90deg, transparent, rgba(244,240,226,.12), transparent);
+      transform: translateX(-120%);
+      animation: shine 1.0s ease-out;
+    }
+    @keyframes shine{ to{ transform: translateX(120%); } }
+
+    .warn{
+      border-left:4px solid var(--danger);
+      background: rgba(203,1,51,.10);
+      padding:10px 12px;
+      border-radius:12px;
+      margin-top:10px;
+    }
+
+    /* ===== Visual: Both sides + Realistic Barbell ===== */
+
+    .viz{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .plates{
+      display:flex;
+      gap:8px;
+      align-items:flex-end;
+      flex-wrap:nowrap;
+      min-width: 300px;
+    }
+    .plates.left{ justify-content:flex-end; }
+    .plates.right{ justify-content:flex-start; }
+
+    /* SVG bumper plates */
+    .plate{
+      width: var(--w, 28px);
+      height: var(--h, 54px);
+      border-radius: 14px;
+      overflow: visible;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.28));
+    }
+    .plate svg{ display:block; width:100%; height:100%; }
+    .plateText{ font-weight: 900; letter-spacing:.5px; fill: rgba(244,240,226,.86); }
+    .plateSub{ font-weight: 800; fill: rgba(244,240,226,.55); }
+
+    .plate.slideLeft{ animation: slideL .25s cubic-bezier(.2,.8,.2,1) both; }
+    .plate.slideRight{ animation: slideR .25s cubic-bezier(.2,.8,.2,1) both; }
+
+    @keyframes slideL{
+      from{ transform: translateX(28px) translateY(6px); opacity:0; }
+      to{ transform: translateX(0) translateY(0); opacity:1; }
+    }
+    @keyframes slideR{
+      from{ transform: translateX(-28px) translateY(6px); opacity:0; }
+      to{ transform: translateX(0) translateY(0); opacity:1; }
+    }
+
+    /* Realistic barbell in the center */
+    .barbell{
+      width: 300px;
+      height: 34px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      transform-origin:center;
+      user-select:none;
+      transition: transform .18s ease;
+    }
+
+    .barbell.spin{ animation: barSpin .26s ease-out; }
+    @keyframes barSpin{
+      0%{ transform: rotate(0deg) scaleX(1); }
+      50%{ transform: rotate(-1.1deg) scaleX(1.02); }
+      100%{ transform: rotate(0deg) scaleX(1); }
+    }
+
+    .sleeve{
+      width: 46px;
+      height: 18px;
+      border-radius: 10px;
+      background: linear-gradient(180deg,
+        rgba(244,240,226,.10),
+        rgba(244,240,226,.24),
+        rgba(0,0,0,.30)
+      );
+      border: 1px solid rgba(244,240,226,.22);
+      box-shadow: inset 0 0 10px rgba(0,0,0,.35), 0 8px 18px rgba(0,0,0,.25);
+      position:relative;
+      transition: transform .18s ease;
+    }
+    .sleeve::after{
+      content:"";
+      position:absolute;
+      inset:3px 6px;
+      border-radius: 8px;
+      border: 1px solid rgba(244,240,226,.16);
+      background: rgba(0,0,0,.18);
+    }
+
+    .shaft{
+      flex:1;
+      height: 12px;
+      border-radius: 999px;
+      background: linear-gradient(90deg,
+        rgba(244,240,226,.08),
+        rgba(244,240,226,.28),
+        rgba(244,240,226,.10)
+      );
+      border: 1px solid rgba(244,240,226,.18);
+      box-shadow: inset 0 0 10px rgba(0,0,0,.35);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .knurl{
+      position:absolute;
+      top:-1px;
+      width: 30%;
+      height: 14px;
+      border-radius: 999px;
+      background: repeating-linear-gradient(45deg,
+        rgba(0,0,0,.18) 0 4px,
+        rgba(244,240,226,.06) 4px 8px
+      );
+      border: 1px solid rgba(244,240,226,.10);
+      opacity:.9;
+    }
+    .knurl.left{ left:10%; }
+    .knurl.right{ right:10%; }
+
+    .center{
+      position:absolute;
+      left:50%;
+      top:-2px;
+      transform:translateX(-50%);
+      width: 26px;
+      height: 16px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(244,240,226,.16);
+      box-shadow: inset 0 0 8px rgba(0,0,0,.35);
+    }
+
+    /* Compression effect when plates are present */
+    .barbell.loaded{
+      transform: scaleX(0.985);
+    }
+    .barbell.loaded .sleeve.left{
+      transform: translateX(3px) scaleX(0.96);
+    }
+    .barbell.loaded .sleeve.right{
+      transform: translateX(-3px) scaleX(0.96);
+    }
+    .barbell.loaded .shaft{
+      box-shadow: inset 0 0 12px rgba(0,0,0,.45);
+    }
+
+    /* Confetti for exact match */
+    .confetti{
+      position: fixed;
+      top: -10px;
+      width: 10px;
+      height: 14px;
+      border-radius: 3px;
+      opacity: .95;
+      pointer-events:none;
+      animation: confettiFall 1.2s ease-out forwards;
+    }
+    @keyframes confettiFall{
+      0%{ transform: translateY(0) rotate(0deg); opacity:1; }
+      100%{ transform: translateY(110vh) rotate(520deg); opacity:0; }
+    }
+
+    /* Mobile fit */
+    @media (max-width: 560px){
+      .plates{ min-width: 150px; }
+      .barbell{ width: 200px; }
+      .sleeve{ width: 34px; }
+      input[type="number"]{ width: 150px; }
+      select{ min-width: 150px; }
+    }
+  </style>
 </head>
 
 <body>
-<div class="wrap">
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <img class="logo" src="cc-logo.jpg" alt="Gym logo" onerror="this.style.display='none'">
+        <div>
+          <h1>Barbell Buddy</h1>
+          <div class="sub">Plate math that feels like a gym app.</div>
+        </div>
+      </div>
 
-<header>
-  <div class="brand">
-    <img class="logo" src="cc-logo.jpg">
-    <div>
-      <h1>Barbell Buddy</h1>
-      <div class="sub">Precision plate loading.</div>
+      <div class="memeWrap">
+        <button id="muteBtn" class="ghost" title="Toggle sound">🔊 Sound: ON</button>
+
+        <a href="https://crossfitroots.com/"
+           target="_blank"
+           rel="noopener noreferrer"
+           title="Visit CrossFit Roots">
+          <img class="meme" src="iron-dave.png" alt="CrossFit Roots" onerror="this.style.display='none'">
+        </a>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- CONTROLS -->
+      <div class="card">
+        <div class="row">
+          <div>
+            <label for="unit">Units</label>
+            <select id="unit">
+              <option value="lb" selected>Pounds (lb)</option>
+              <option value="kg">Kilograms (kg)</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="bar">Bar weight</label>
+            <select id="bar">
+              <option value="45" selected>45 lb (standard)</option>
+              <option value="35">35 lb</option>
+              <option value="25">25 lb</option>
+              <option value="20">20 kg</option>
+              <option value="15">15 kg</option>
+              <option value="custom">Custom…</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="barCustom">Custom bar</label>
+            <input id="barCustom" type="number" step="0.5" value="45" disabled />
+          </div>
+
+          <div>
+            <label for="collars">Collars (each side)</label>
+            <select id="collars">
+              <option value="0" selected>None</option>
+              <option value="2.5">2.5</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row">
+          <div>
+            <label for="target">Target total</label>
+            <input id="target" type="number" step="0.5" value="225" />
+          </div>
+
+          <div>
+            <label for="mode">Mode</label>
+            <select id="mode">
+              <option value="exact" selected>Exact only</option>
+              <option value="under">Closest under</option>
+              <option value="over">Closest over</option>
+              <option value="either">Closest either</option>
+            </select>
+          </div>
+
+          <div>
+            <label>&nbsp;</label>
+            <button id="calcBtn">Calculate</button>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row" style="align-items:center;">
+          <div class="mini muted" style="flex:1;">
+            Plates + inventory (<b>pairs</b> available). Toggle plate sizes and set how many pairs you have.
+          </div>
+          <button id="resetInvBtn" class="ghost" title="Reset to 1 pair each">Reset inventory</button>
+        </div>
+
+        <div id="platesWrap"></div>
+
+        <div class="mini muted" style="margin-top:10px;">
+          Sounds use <b>mp3</b> files in <span style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;">/sounds</span>.
+        </div>
+      </div>
+
+      <!-- RESULTS -->
+      <div class="card" id="resultsCard">
+        <div class="row" style="justify-content:space-between; align-items:center;">
+          <div style="font-size:22px; font-weight:900;">Load Plan</div>
+          <div class="muted" id="summary"></div>
+        </div>
+
+        <div id="status"></div>
+
+        <div class="divider"></div>
+
+        <div class="muted">Per side:</div>
+        <ul id="perSide"></ul>
+
+        <div class="divider"></div>
+
+        <div class="muted">Total plates on bar:</div>
+        <ul id="totalPlates"></ul>
+
+        <div class="divider"></div>
+
+        <div class="muted">Visual:</div>
+        <div class="viz">
+          <div class="plates left" id="vizLeft"></div>
+
+          <div class="barbell" id="barViz" aria-hidden="true">
+            <div class="sleeve left"></div>
+            <div class="shaft">
+              <div class="knurl left"></div>
+              <div class="center"></div>
+              <div class="knurl right"></div>
+            </div>
+            <div class="sleeve right"></div>
+          </div>
+
+          <div class="plates right" id="vizRight"></div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="memeWrap">
-    <button id="muteBtn" class="ghost">🔊 Sound: ON</button>
-    <a href="https://crossfitroots.com/" target="_blank">
-      <img class="meme" src="cc-logo.jpg">
-    </a>
-  </div>
-</header>
+  <script>
+    // -------------------------
+    // Sounds (match your /sounds filenames)
+    // -------------------------
+    const CLICK_SOUNDS = [
+      "crickets","chicken","punch","boing","orchestra","boom","whistle","boxing-bell",
+      "cartoon-whistle","wrong-answer","sad-trombone","boo","airhorn","laugh","rimshot"
+    ].map(n => `sounds/${n}.mp3`);
 
-<div class="card">
-<div class="row">
-<div>
-<label>Bar weight</label>
-<select id="bar">
-<option value="45">45 lb</option>
-<option value="35">35 lb</option>
-</select>
-</div>
+    const CLANG_SOUND = "sounds/boxing-bell.mp3";
+    const WIN_SOUND   = "sounds/airhorn.mp3";
+    const FAIL_SOUND  = "sounds/sad-trombone.mp3";
 
-<div>
-<label>Target</label>
-<input id="target" type="number" value="225">
-</div>
+    let soundEnabled = true;
 
-<div>
-<label>Mode</label>
-<select id="mode">
-<option value="exact">Exact</option>
-<option value="under">Closest Under</option>
-<option value="over">Closest Over</option>
-<option value="either">Closest Either</option>
-</select>
-</div>
+    function playSound(src, volume=0.55){
+      if (!soundEnabled) return;
+      try{
+        const a = new Audio(src);
+        a.volume = volume;
+        a.play().catch(()=>{});
+      }catch(e){}
+    }
+    function playRandomClick(){
+      const src = CLICK_SOUNDS[Math.floor(Math.random() * CLICK_SOUNDS.length)];
+      playSound(src, 0.5);
+    }
 
-<div>
-<label>&nbsp;</label>
-<button id="calcBtn">Calculate</button>
-</div>
-</div>
+    // -------------------------
+    // DOM
+    // -------------------------
+    const unitEl = document.getElementById('unit');
+    const barEl = document.getElementById('bar');
+    const barCustomEl = document.getElementById('barCustom');
+    const collarsEl = document.getElementById('collars');
+    const targetEl = document.getElementById('target');
+    const modeEl = document.getElementById('mode');
+    const calcBtn = document.getElementById('calcBtn');
+    const resetInvBtn = document.getElementById('resetInvBtn');
+    const platesWrap = document.getElementById('platesWrap');
 
-<div id="status"></div>
+    const summaryEl = document.getElementById('summary');
+    const statusEl = document.getElementById('status');
+    const perSideEl = document.getElementById('perSide');
+    const totalPlatesEl = document.getElementById('totalPlates');
 
-<div class="viz">
-<div class="plates left" id="left"></div>
-<div class="bar" id="barViz"></div>
-<div class="plates right" id="right"></div>
-</div>
-</div>
+    const vizLeftEl = document.getElementById('vizLeft');
+    const vizRightEl = document.getElementById('vizRight');
+    const barVizEl = document.getElementById('barViz');
+    const resultsCard = document.getElementById('resultsCard');
 
-</div>
+    const muteBtn = document.getElementById('muteBtn');
 
-<script>
-const left=document.getElementById("left");
-const right=document.getElementById("right");
-const calcBtn=document.getElementById("calcBtn");
-const barViz=document.getElementById("barViz");
-const status=document.getElementById("status");
-const muteBtn=document.getElementById("muteBtn");
+    // -------------------------
+    // Plate sets
+    // -------------------------
+    const PLATES_LB = [45, 35, 25, 10, 5, 2.5];
+    const PLATES_KG = [25, 20, 15, 10, 5, 2.5, 1.25];
 
-let soundOn=true;
+    function fmt(n){
+      const s = Number(n).toFixed(2);
+      return s.replace(/\.00$/,'').replace(/(\.\d)0$/,'$1');
+    }
+    function plateKey(w){ return `p_${String(w).replace('.','_')}`; }
 
-const PLATES=[45,35,25,10,5,2.5];
+    function barWeight(){
+      if (barEl.value === 'custom') return Number(barCustomEl.value || 0);
+      return Number(barEl.value);
+    }
+    function collarsTotal(){
+      const each = Number(collarsEl.value);
+      return each * 2;
+    }
 
-function fmt(n){return Number(n).toFixed(0);}
+    function getPlatesForUnit(unit){
+      return unit === 'kg' ? PLATES_KG.slice() : PLATES_LB.slice();
+    }
 
-function svgPlate(w){
-return `
-<svg viewBox="0 0 100 160">
-<rect x="10" y="10" width="80" height="140" rx="18"
-fill="hsl(185 55% 24%)" stroke="rgba(244,240,226,.18)"/>
-<circle cx="50" cy="80" r="22"
-fill="rgba(0,0,0,.35)" stroke="rgba(244,240,226,.22)" stroke-width="3"/>
-<text x="50" y="85" text-anchor="middle"
-fill="white" font-size="28">${fmt(w)}</text>
+    // -------------------------
+    // Inventory UI
+    // -------------------------
+    function renderPlateInventory(){
+      platesWrap.innerHTML = '';
+      const unit = unitEl.value;
+      const plates = getPlatesForUnit(unit).sort((a,b)=>b-a);
+
+      plates.forEach(w => {
+        const id = plateKey(w);
+        const div = document.createElement('div');
+        div.className = 'pill';
+        div.innerHTML = `
+          <input type="checkbox" id="${id}_on" data-weight="${w}" checked />
+          <div class="w">${fmt(w)} ${unit}</div>
+          <div class="mini muted">pairs</div>
+          <input type="number" id="${id}_pairs" data-weight="${w}" min="0" step="1" value="1" style="width:90px;padding:8px 10px;">
+        `;
+        platesWrap.appendChild(div);
+      });
+    }
+
+    function resetInventoryTo1(){
+      platesWrap.querySelectorAll('input[type="checkbox"]').forEach(ch => ch.checked = true);
+      platesWrap.querySelectorAll('input[type="number"]').forEach(n => n.value = 1);
+    }
+
+    function selectedInventory(){
+      const items = [];
+      platesWrap.querySelectorAll('input[type="checkbox"]').forEach(ch => {
+        if (!ch.checked) return;
+        const w = Number(ch.dataset.weight);
+        const pairsInput = document.getElementById(`${plateKey(w)}_pairs`);
+        const pairs = Math.max(0, Math.floor(Number(pairsInput?.value ?? 0)));
+        if (pairs > 0) items.push({ w, pairs });
+      });
+      items.sort((a,b)=>b.w-a.w);
+      return items;
+    }
+
+    // -------------------------
+    // Solver (bounded search)
+    // -------------------------
+    function solvePerSide(perSideTarget, inventory, mode){
+      // inventory: [{w, pairs}] where pairs = max count per side
+      const weights = inventory.map(x => x.w);
+      const maxCounts = inventory.map(x => x.pairs);
+
+      const round2 = (x)=>Math.round(x*100)/100;
+
+      let best = null; // {sum, counts[], plateCount}
+
+      function consider(sum, counts){
+        sum = round2(sum);
+        const plateCount = counts.reduce((a,c)=>a+c,0);
+        const diff = round2(sum - perSideTarget);
+        const absDiff = Math.abs(diff);
+
+        if (mode === 'exact' && absDiff > 1e-9) return;
+        if (mode === 'under' && diff > 1e-9) return;       // sum > target
+        if (mode === 'over'  && diff < -1e-9) return;      // sum < target
+
+        if (!best){
+          best = {sum, counts: counts.slice(), plateCount};
+          return;
+        }
+
+        const bestDiff = round2(best.sum - perSideTarget);
+        const bestAbs = Math.abs(bestDiff);
+
+        const better =
+          mode === 'either'
+            ? (absDiff < bestAbs - 1e-9) ||
+              (Math.abs(absDiff - bestAbs) <= 1e-9 && plateCount < best.plateCount) ||
+              (Math.abs(absDiff - bestAbs) <= 1e-9 && plateCount === best.plateCount && sum > best.sum)
+            : mode === 'under'
+              ? (sum > best.sum + 1e-9) ||
+                (Math.abs(sum - best.sum) <= 1e-9 && plateCount < best.plateCount)
+              : mode === 'over'
+                ? (sum < best.sum - 1e-9) ||
+                  (Math.abs(sum - best.sum) <= 1e-9 && plateCount < best.plateCount)
+                : false;
+
+        if (better){
+          best = {sum, counts: counts.slice(), plateCount};
+        }
+      }
+
+      const n = weights.length;
+
+      function dfs(i, currentSum, counts){
+        if (i === n){
+          consider(currentSum, counts);
+          return;
+        }
+
+        const w = weights[i];
+        const maxC = maxCounts[i];
+
+        for (let c = maxC; c >= 0; c--){
+          const nextSum = round2(currentSum + c*w);
+
+          // prune for under/exact if we exceed
+          if ((mode === 'under' || mode === 'exact') && nextSum - perSideTarget > 1e-9) continue;
+
+          counts[i] = c;
+          dfs(i+1, nextSum, counts);
+        }
+        counts[i] = 0;
+      }
+
+      dfs(0, 0, new Array(n).fill(0));
+      return best ? { sum: best.sum, counts: best.counts, weights } : null;
+    }
+
+    function breakdown(weights, counts){
+      const out = {};
+      for (let i=0;i<weights.length;i++){
+        if (counts[i] > 0) out[weights[i]] = counts[i];
+      }
+      return out;
+    }
+
+    // -------------------------
+    // SVG plate styling
+    // -------------------------
+    function plateStyleByWeight(w, unit){
+      const isKg = unit === 'kg';
+      let size = 1; // 1..6
+      if (isKg){
+        if (w >= 25) size = 6;
+        else if (w >= 20) size = 5;
+        else if (w >= 15) size = 4;
+        else if (w >= 10) size = 3;
+        else if (w >= 5)  size = 2;
+        else size = 1;
+      } else {
+        if (w >= 45) size = 6;
+        else if (w >= 35) size = 5;
+        else if (w >= 25) size = 4;
+        else if (w >= 10) size = 3;
+        else if (w >= 5)  size = 2;
+        else size = 1;
+      }
+
+      const heights = [34, 40, 46, 54, 60, 66];
+      const widths  = [18, 22, 26, 30, 34, 38];
+
+      const h = heights[size-1];
+      const wpx = widths[size-1];
+
+      const hue =
+        size === 6 ? 185 :
+        size === 5 ? 200 :
+        size === 4 ? 210 :
+        size === 3 ? 175 :
+        size === 2 ? 10  :
+                    40;
+
+      return { h, wpx, hue };
+    }
+
+    function svgPlateMarkup(weight, unit, hue){
+      const outer = `hsl(${hue} 55% 24%)`;
+      const outer2 = `hsl(${hue} 60% 18%)`;
+      const glow  = `hsla(${hue}, 90%, 60%, .18)`;
+      const hub1  = `rgba(244,240,226,.22)`;
+      const hub2  = `rgba(0,0,0,.28)`;
+
+      const label = `${fmt(weight)}`;
+      const sub = unit.toUpperCase();
+
+      return `
+<svg viewBox="0 0 100 160" role="img" aria-label="${label} ${sub} plate">
+  <defs>
+    <linearGradient id="gOuter_${hue}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${outer}"/>
+      <stop offset="100%" stop-color="${outer2}"/>
+    </linearGradient>
+    <linearGradient id="gShine_${hue}" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="transparent"/>
+      <stop offset="45%" stop-color="${glow}"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="6" y="6" width="88" height="148" rx="18" fill="url(#gOuter_${hue})" stroke="rgba(244,240,226,.16)" />
+  <rect x="16" y="18" width="68" height="124" rx="14" fill="rgba(0,0,0,.12)" stroke="rgba(244,240,226,.08)" />
+  <rect x="22" y="26" width="56" height="108" rx="12" fill="rgba(0,0,0,.10)" stroke="rgba(244,240,226,.06)" />
+
+  <circle cx="50" cy="80" r="22" fill="${hub2}" stroke="${hub1}" stroke-width="3"/>
+  <circle cx="50" cy="80" r="10" fill="rgba(0,0,0,.35)" stroke="rgba(244,240,226,.12)" stroke-width="2"/>
+
+  <rect x="10" y="10" width="80" height="140" rx="16" fill="url(#gShine_${hue})" opacity=".9"/>
+
+  <text x="50" y="78" text-anchor="middle" class="plateText" font-size="26">${label}</text>
+  <text x="50" y="104" text-anchor="middle" class="plateSub" font-size="12">${sub}</text>
 </svg>`;
-}
+    }
 
-function popConfetti(){
-for(let i=0;i<20;i++){
-let c=document.createElement("div");
-c.className="confetti";
-c.style.left=Math.random()*100+"vw";
-c.style.background=`hsl(${Math.random()*360},90%,60%)`;
-document.body.appendChild(c);
-setTimeout(()=>c.remove(),1200);
-}
-}
+    function renderViz(weights, counts, unit){
+      vizLeftEl.innerHTML = '';
+      vizRightEl.innerHTML = '';
 
-function render(perSide){
-left.innerHTML="";
-right.innerHTML="";
-for(let i=0;i<perSide.length;i++){
-let w=perSide[i];
-let p=document.createElement("div");
-p.className="plate slideLeft";
-p.style.setProperty("--h","60px");
-p.style.setProperty("--w","34px");
-p.innerHTML=svgPlate(w);
-left.prepend(p);
+      let totalPlatesPerSide = 0;
 
-let p2=document.createElement("div");
-p2.className="plate slideRight";
-p2.style.setProperty("--h","60px");
-p2.style.setProperty("--w","34px");
-p2.innerHTML=svgPlate(w);
-right.appendChild(p2);
-}
-}
+      for (let i=0;i<weights.length;i++){
+        const plateW = weights[i];
+        const c = counts[i];
+        if (c <= 0) continue;
 
-function calculate(){
-barViz.classList.remove("spin");
-void barViz.offsetWidth;
-barViz.classList.add("spin");
+        const style = plateStyleByWeight(plateW, unit);
 
-let target=Number(document.getElementById("target").value);
-let bar=Number(document.getElementById("bar").value);
-let mode=document.getElementById("mode").value;
+        for (let k=0;k<c;k++){
+          totalPlatesPerSide += 1;
 
-let load=target-bar;
-let perSide=load/2;
-let solution=[];
-let remaining=perSide;
+          const makePlate = (animClass) => {
+            const d = document.createElement('div');
+            d.className = `plate ${animClass}`;
+            d.style.setProperty('--h', `${style.h}px`);
+            d.style.setProperty('--w', `${style.wpx}px`);
+            d.innerHTML = svgPlateMarkup(plateW, unit, style.hue);
+            return d;
+          };
 
-for(let p of PLATES){
-while(remaining>=p){
-solution.push(p);
-remaining-=p;
-}
-}
+          vizLeftEl.prepend(makePlate('slideLeft'));
+          vizRightEl.appendChild(makePlate('slideRight'));
+        }
+      }
 
-render(solution);
+      // Compression / relax based on plates
+      if (totalPlatesPerSide > 0){
+        barVizEl.classList.add('loaded');
+      } else {
+        barVizEl.classList.remove('loaded');
+      }
 
-let total=bar+solution.reduce((a,b)=>a+b,0)*2;
-let diff=total-target;
+      if (vizLeftEl.children.length === 0){
+        vizLeftEl.innerHTML = '<div class="mini muted">No plates</div>';
+        vizRightEl.innerHTML = '<div class="mini muted">No plates</div>';
+      }
+    }
 
-if(diff===0){
-status.innerHTML=`<div class="ok">Exact match ${total}</div>`;
-popConfetti();
-}else{
-status.innerHTML=`<div class="warn">${total} (${diff>0?"over":"under"} by ${Math.abs(diff)})</div>`;
-}
-}
+    // -------------------------
+    // Confetti
+    // -------------------------
+    function popConfetti(count = 26){
+      const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReduced) return;
 
-calcBtn.addEventListener("click",calculate);
+      for (let i=0;i<count;i++){
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.style.left = `${Math.random()*100}vw`;
+        c.style.background = `hsl(${Math.floor(Math.random()*360)}, 85%, 60%)`;
+        c.style.animationDelay = `${Math.random()*0.12}s`;
+        document.body.appendChild(c);
+        setTimeout(()=>c.remove(), 1400);
+      }
+    }
 
-muteBtn.addEventListener("click",()=>{
-soundOn=!soundOn;
-muteBtn.textContent=soundOn?"🔊 Sound: ON":"🔇 Sound: OFF";
-});
-</script>
+    // -------------------------
+    // Main calculate
+    // -------------------------
+    function clearResults(){
+      summaryEl.textContent = '';
+      statusEl.innerHTML = '';
+      perSideEl.innerHTML = '';
+      totalPlatesEl.innerHTML = '';
+    }
 
+    function calculate(){
+      clearResults();
+
+      const unit = unitEl.value;
+      const target = Number(targetEl.value);
+      const mode = modeEl.value;
+
+      if (!Number.isFinite(target) || target <= 0){
+        statusEl.innerHTML = `<div class="warn">Enter a valid target weight.</div>`;
+        return;
+      }
+
+      const bar = barWeight();
+      const collars = collarsTotal();
+      const inventory = selectedInventory();
+
+      if (inventory.length === 0){
+        statusEl.innerHTML = `<div class="warn">Select at least one plate size and set pairs &gt; 0.</div>`;
+        renderViz([], [], unit);
+        return;
+      }
+
+      const loadable = target - bar - collars;
+
+      if (loadable < 0){
+        summaryEl.textContent = `${fmt(bar + collars)} ${unit} minimum`;
+        statusEl.innerHTML = `<div class="warn">Target is less than bar + collars (${fmt(bar + collars)} ${unit}).</div>`;
+        renderViz([], [], unit);
+        return;
+      }
+
+      const perSideTarget = loadable / 2;
+
+      const uneven = Math.abs(perSideTarget * 2 - loadable) > 1e-9;
+
+      const effectiveMode = uneven ? 'either' : mode;
+
+      const sol = solvePerSide(perSideTarget, inventory, effectiveMode);
+
+      if (!sol){
+        statusEl.innerHTML = `<div class="warn">No solution found with current plates/inventory.</div>`;
+        renderViz([], [], unit);
+        return;
+      }
+
+      const achievedTotal = bar + collars + sol.sum * 2;
+      summaryEl.textContent = `${fmt(achievedTotal)} ${unit} total`;
+
+      const diff = Math.round((achievedTotal - target) * 100) / 100;
+      const exact = Math.abs(diff) < 1e-9;
+
+      // Bar spin every time
+      barVizEl.classList.remove('spin');
+      void barVizEl.offsetWidth;
+      barVizEl.classList.add('spin');
+
+      // Render lists
+      const per = breakdown(sol.weights, sol.counts);
+      const keys = Object.keys(per).map(Number).sort((a,b)=>b-a);
+
+      if (keys.length === 0){
+        perSideEl.innerHTML = `<li>No plates needed per side.</li>`;
+        totalPlatesEl.innerHTML = `<li>None.</li>`;
+      } else {
+        keys.forEach(w => perSideEl.appendChild(Object.assign(document.createElement('li'), {textContent: `${per[w]} × ${fmt(w)} ${unit}`})));
+        keys.forEach(w => totalPlatesEl.appendChild(Object.assign(document.createElement('li'), {textContent: `${per[w]*2} × ${fmt(w)} ${unit}`})));
+      }
+
+      // Render visual + compression based on plate count
+      renderViz(sol.weights, sol.counts, unit);
+
+      // Status + celebration
+      if (uneven){
+        statusEl.innerHTML = `<div class="warn">Target minus bar/collars (${fmt(loadable)} ${unit}) can’t split evenly across both sides. Closest plan: ${fmt(achievedTotal)} ${unit}.</div>`;
+      } else if (exact){
+        statusEl.innerHTML = `<div class="ok">Exact match: ${fmt(target)} ${unit}. Load ${fmt(perSideTarget)} ${unit} per side.</div>`;
+        popConfetti(28);
+      } else if (diff < 0){
+        statusEl.innerHTML = `<div class="warn">Closest plan: ${fmt(achievedTotal)} ${unit} (under by ${fmt(Math.abs(diff))} ${unit}).</div>`;
+      } else {
+        statusEl.innerHTML = `<div class="warn">Closest plan: ${fmt(achievedTotal)} ${unit} (over by ${fmt(diff)} ${unit}).</div>`;
+      }
+
+      // Sounds
+      playRandomClick();
+      playSound(CLANG_SOUND, 0.35);
+      if (exact) playSound(WIN_SOUND, 0.45);
+      else playSound(FAIL_SOUND, 0.45);
+    }
+
+    // -------------------------
+    // Unit defaults
+    // -------------------------
+    function syncUnitDefaults(){
+      const unit = unitEl.value;
+      if (unit === 'kg'){
+        if (barEl.value !== 'custom') barEl.value = '20';
+        collarsEl.value = '2.5';
+        targetEl.step = '0.5';
+      } else {
+        if (barEl.value !== 'custom') barEl.value = '45';
+        collarsEl.value = '0';
+        targetEl.step = '0.5';
+      }
+    }
+
+    // -------------------------
+    // Events
+    // -------------------------
+    barEl.addEventListener('change', () => {
+      const isCustom = barEl.value === 'custom';
+      barCustomEl.disabled = !isCustom;
+      if (!isCustom) barCustomEl.value = barEl.value;
+      calculate();
+    });
+    barCustomEl.addEventListener('input', calculate);
+
+    unitEl.addEventListener('change', () => {
+      syncUnitDefaults();
+      renderPlateInventory();
+      calculate();
+    });
+
+    collarsEl.addEventListener('change', calculate);
+    modeEl.addEventListener('change', calculate);
+
+    calcBtn.addEventListener('click', calculate);
+    targetEl.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') calculate(); });
+
+    platesWrap.addEventListener('input', (e) => {
+      if (e.target && (e.target.tagName === 'INPUT')) calculate();
+    });
+
+    resetInvBtn.addEventListener('click', () => {
+      resetInventoryTo1();
+      calculate();
+    });
+
+    muteBtn.addEventListener('click', () => {
+      soundEnabled = !soundEnabled;
+      muteBtn.textContent = soundEnabled ? '🔊 Sound: ON' : '🔇 Sound: OFF';
+      if (soundEnabled) playSound(CLANG_SOUND, 0.35);
+    });
+
+    // Init
+    (function init(){
+      syncUnitDefaults();
+      renderPlateInventory();
+      barCustomEl.value = barEl.value;
+      calculate();
+    })();
+  </script>
 </body>
 </html>
