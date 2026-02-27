@@ -516,12 +516,6 @@ input, select, button{
     // -------------------------
     // Sounds (match your /sounds filenames)
     // -------------------------
-    const CLICK_SOUNDS = [
-      "crickets","chicken","punch","boing","orchestra","boom","whistle","boxing-bell",
-      "cartoon-whistle","wrong-answer","sad-trombone","boo","airhorn","laugh","rimshot"
-    ].map(n => `sounds/${n}.mp3`);
-
-    const CLANG_SOUND = "sounds/boxing-bell.mp3";
     const WIN_SOUND   = "sounds/airhorn.mp3";
     const FAIL_SOUND  = "sounds/sad-trombone.mp3";
 
@@ -535,11 +529,7 @@ input, select, button{
         a.play().catch(()=>{});
       }catch(e){}
     }
-    function playRandomClick(){
-      const src = CLICK_SOUNDS[Math.floor(Math.random() * CLICK_SOUNDS.length)];
-      playSound(src, 0.5);
-    }
-
+  
     // -------------------------
     // DOM
     // -------------------------
@@ -949,10 +939,12 @@ if (window.innerWidth <= 560){
       }
 
     // Sounds
-playRandomClick();
-playSound(CLANG_SOUND, 0.35);
-if (exact) playSound(WIN_SOUND, 0.45);
-else playSound(FAIL_SOUND, 0.45);
+// Simple sound logic
+if (exact){
+  playSound(WIN_SOUND, 0.5);
+} else {
+  playSound(FAIL_SOUND, 0.45);
+}
 
 // Stop mobile zoom + scroll to results (mobile only)
 if (window.innerWidth < 980){
@@ -1047,6 +1039,7 @@ if (window.innerWidth < 980){
   </script>
 </body>
 </html>
+
 
 
 
