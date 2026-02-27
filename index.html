@@ -547,7 +547,7 @@
           <input type="checkbox" id="${id}_on" data-weight="${w}" checked />
           <div class="w">${fmt(w)} ${unit}</div>
           <div class="mini muted">pairs</div>
-          <input type="number" id="${id}_pairs" data-weight="${w}" min="0" step="1" value="1" style="width:90px;padding:8px 10px;">
+          <input type="number" id="${id}_pairs" data-weight="${w}" min="0" step="1" value="5" style="width:90px;padding:8px 10px;">
         `;
         platesWrap.appendChild(div);
       });
@@ -555,7 +555,7 @@
 
     function resetInventoryTo1(){
       platesWrap.querySelectorAll('input[type="checkbox"]').forEach(ch => ch.checked = true);
-      platesWrap.querySelectorAll('input[type="number"]').forEach(n => n.value = 1);
+      platesWrap.querySelectorAll('input[type="number"]').forEach(n => n.value = 5);
     }
 
     function selectedInventory(){
@@ -956,4 +956,5 @@
   </script>
 </body>
 </html>
+
 
